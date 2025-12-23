@@ -1673,43 +1673,56 @@ body {
 /* ============ VISUAL ANIMATED STORY ============ */
 .story-scene {
     background: var(--bg-deepest);
-    padding: 2rem 1rem;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
 }
 
 .visual-story {
+    position: relative;
+    width: 100%;
     max-width: 400px;
+    height: 400px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    padding: 2rem 0;
 }
 
-/* Story Chapters */
+/* Story Chapters - Slideshow Style */
 .story-chapter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     opacity: 0;
-    transform: translateY(40px) scale(0.95);
+    transform: translateX(100px);
     transition: all 0.8s var(--ease-out);
+    pointer-events: none;
 }
 
 .story-chapter.show {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.story-chapter.hide {
+    opacity: 0;
+    transform: translateX(-100px);
 }
 
 .chapter-visual {
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .chapter-result {
     text-align: center;
     opacity: 0;
     transform: translateY(10px);
-    transition: all 0.5s var(--ease-out) 0.5s;
+    transition: all 0.5s var(--ease-out) 0.8s;
 }
 
 .story-chapter.show .chapter-result {

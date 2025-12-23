@@ -281,76 +281,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ============ VISUAL STORY ANIMATION ============
+    // ============ VISUAL STORY ANIMATION (SLIDESHOW) ============
     function initStory() {
         const chapters = document.querySelectorAll('.story-chapter');
-        const storyScene = document.getElementById('storyScene');
+        let currentChapter = 0;
 
-        chapters.forEach((chapter, i) => {
-            setTimeout(() => {
-                chapter.classList.add('show');
-                playSound('pop', 0.05);
+        function showChapter(index) {
+            // Hide previous chapter
+            if (index > 0) {
+                chapters[index - 1].classList.remove('show');
+                chapters[index - 1].classList.add('hide');
+            }
 
-                // Auto-scroll to keep chapter visible
-                if (storyScene) {
-                    const chapterTop = chapter.offsetTop - 80;
-                    storyScene.scrollTo({ top: chapterTop, behavior: 'smooth' });
+            // Show current chapter
+            chapters[index].classList.remove('hide');
+            chapters[index].classList.add('show');
+            playSound('pop', 0.05);
+
+            // Chapter-specific animations
+            const chapter = chapters[index];
+            const chapterNum = chapter.dataset.chapter;
+
+            // Chapter 1: Facebook button animation
+            if (chapterNum === '1') {
+                const fbBtn = chapter.querySelector('.fb-button');
+                if (fbBtn) {
+                    setTimeout(() => fbBtn.classList.add('sending'), 500);
+                    setTimeout(() => fbBtn.classList.add('pending'), 1500);
                 }
+            }
 
-                // Chapter-specific animations
-                const chapterNum = chapter.dataset.chapter;
+            // Chapter 2: Instagram follow animation
+            if (chapterNum === '2') {
+                const igBtn = chapter.querySelector('.ig-button');
+                if (igBtn) {
+                    setTimeout(() => igBtn.classList.add('followed'), 800);
+                }
+            }
 
-                // Chapter 1: Facebook button animation
-                if (chapterNum === '1') {
-                    const fbBtn = chapter.querySelector('.fb-button');
-                    if (fbBtn) {
-                        setTimeout(() => fbBtn.classList.add('sending'), 500);
-                        setTimeout(() => fbBtn.classList.add('pending'), 1500);
+            // Chapter 3: Story rings watching animation
+            if (chapterNum === '3') {
+                const rings = chapter.querySelectorAll('.story-ring');
+                rings.forEach((ring, ri) => {
+                    setTimeout(() => ring.classList.add('watched'), ri * 500);
+                });
+            }
+
+            // Chapter 4: Cancel/Send loop animation
+            if (chapterNum === '4') {
+                const cancelBtn = chapter.querySelector('.cancel-btn');
+                const sendBtn = chapter.querySelector('.send-btn');
+                let loopCount = 0;
+                const loopInterval = setInterval(() => {
+                    if (loopCount % 2 === 0) {
+                        cancelBtn.classList.add('active');
+                        sendBtn.classList.remove('active');
+                    } else {
+                        cancelBtn.classList.remove('active');
+                        sendBtn.classList.add('active');
                     }
-                }
+                    loopCount++;
+                    if (loopCount > 6) clearInterval(loopInterval);
+                }, 400);
+            }
 
-                // Chapter 2: Instagram follow animation
-                if (chapterNum === '2') {
-                    const igBtn = chapter.querySelector('.ig-button');
-                    if (igBtn) {
-                        setTimeout(() => igBtn.classList.add('followed'), 800);
-                    }
-                }
+            // Chapter 5: Victory sound
+            if (chapterNum === '5') {
+                setTimeout(() => playSound('chime', 0.15), 500);
+            }
+        }
 
-                // Chapter 3: Story rings watching animation
-                if (chapterNum === '3') {
-                    const rings = chapter.querySelectorAll('.story-ring');
-                    rings.forEach((ring, ri) => {
-                        setTimeout(() => {
-                            ring.classList.add('watched');
-                        }, ri * 600);
-                    });
-                }
-
-                // Chapter 4: Cancel/Send loop animation
-                if (chapterNum === '4') {
-                    const cancelBtn = chapter.querySelector('.cancel-btn');
-                    const sendBtn = chapter.querySelector('.send-btn');
-                    let loopCount = 0;
-                    const loopInterval = setInterval(() => {
-                        if (loopCount % 2 === 0) {
-                            cancelBtn.classList.add('active');
-                            sendBtn.classList.remove('active');
-                        } else {
-                            cancelBtn.classList.remove('active');
-                            sendBtn.classList.add('active');
-                        }
-                        loopCount++;
-                        if (loopCount > 6) clearInterval(loopInterval);
-                    }, 500);
-                }
-
-                // Chapter 5: Victory sound
-                if (chapterNum === '5') {
-                    setTimeout(() => playSound('chime', 0.15), 500);
-                }
-
-            }, i * 3000);  // 3 seconds between each chapter
+        // Show chapters one by one
+        chapters.forEach((_, i) => {
+            setTimeout(() => showChapter(i), i * 3500);  // 3.5 seconds per chapter
         });
     }
 
