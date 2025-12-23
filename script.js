@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============ ELEMENTS ============
     const startScreen = document.getElementById('startScreen');
     const startBtn = document.getElementById('startBtn');
-    const experience = document.getElementById('experience');
+    const experience = document.getElementById('experience'); // Main content container
+    const pageLoader = document.getElementById('pageLoader');
+    const startContent = document.getElementById('startContent');
+
+    // ... (other element refs) ...
     const ambientCanvas = document.getElementById('ambientCanvas');
     const particleCanvas = document.getElementById('particleCanvas');
     const confettiCanvas = document.getElementById('confettiCanvas');
@@ -15,6 +19,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const aCtx = ambientCanvas.getContext('2d');
     const pCtx = particleCanvas.getContext('2d');
     const cCtx = confettiCanvas.getContext('2d');
+
+    // ============ PAGE LOAD HANDLING ============
+    function onPageLoaded() {
+        if (pageLoader) {
+            // Fade out loader
+            pageLoader.style.transition = 'opacity 0.5s ease';
+            pageLoader.style.opacity = '0';
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+
+                // Show start content
+                if (startContent) {
+                    startContent.style.display = 'block';
+                    // Trigger reflow
+                    void startContent.offsetWidth;
+                    startContent.classList.remove('hidden');
+                }
+            }, 500);
+        }
+    }
+
+    if (document.readyState === 'complete') {
+        setTimeout(onPageLoaded, 1000); // Minimum 1s load time for effect
+    } else {
+        window.addEventListener('load', () => setTimeout(onPageLoaded, 1000));
+    }
 
     // Sounds
     const sounds = {
@@ -595,6 +625,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============ START ============
     startBtn.addEventListener('click', () => {
+        // Unlock all audio for mobile (browser policy requirement)
+        Object.values(sounds).forEach(audio => {
+            if (audio) {
+                audio.muted = true;
+                audio.play().catch(() => { });
+                audio.pause();
+                audio.muted = false;
+            }
+        });
+
         playSound('start', 0.3);
         startScreen.classList.add('hidden');
         setTimeout(() => {

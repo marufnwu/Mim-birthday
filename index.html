@@ -99,19 +99,22 @@
     <!-- Start Screen -->
     <div class="start-screen" id="startScreen">
         <div class="start-pattern"></div>
-        <div class="start-content">
+
+        <!-- Loader -->
+        <div class="loader" id="pageLoader">
+            <div class="spinner"></div>
+            <div class="loader-text">Loading Memories...</div>
+        </div>
+
+        <!-- Content (Hidden initially) -->
+        <div class="start-content hidden" id="startContent">
             <div class="logo-diamond">
                 <div class="diamond-shape"></div>
-                <div class="diamond-inner"></div>
+                <span class="logo-text">M</span>
             </div>
-            <p class="tagline">✧ A Special Presentation ✧</p>
-            <h1 class="start-title">The Arobi Mim Story</h1>
-            <p class="start-sub">An Experience Crafted With Love</p>
-            <button class="start-btn" id="startBtn">
-                <span class="btn-text">Begin Experience</span>
-                <span class="btn-icon">→</span>
-            </button>
-            <p class="sound-hint">🔊 Sound recommended</p>
+            <h1>The Arobi Mim Story</h1>
+            <p>A Cinematic Birthday Experience</p>
+            <button class="start-btn" id="startBtn">Stats Experience</button>
         </div>
         <div class="floating-elements">
             <span class="float-element">✨</span>
