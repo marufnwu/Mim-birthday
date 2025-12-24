@@ -1,6 +1,6 @@
 /* ============================================
-   THE AROBI MIM STORY - ULTRA PREMIUM VERSION
-   Advanced Animations, 3D Effects & Rich Design
+   THE AROBI MIM STORY 
+   Copyright (c) 2025 Maruf Ahmed <dev00.maruf@gmail.com>
    ============================================ */
 
 :root {
@@ -1526,6 +1526,15 @@ body {
     font-size: 0.7rem;
     letter-spacing: 0.3em;
     color: var(--text-muted);
+}
+
+.credit-email {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    margin: 0.2rem 0;
+    opacity: 0.8;
 }
 
 .replay-btn {

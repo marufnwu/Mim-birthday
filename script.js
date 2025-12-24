@@ -1,6 +1,6 @@
 /* ============================================
-   THE AROBI MIM STORY - ULTRA PREMIUM
-   User-Friendly Timing - Readable Speed
+   THE AROBI MIM STORY 
+   Copyright (c) 2025 Maruf Ahmed <dev00.maruf@gmail.com>
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
