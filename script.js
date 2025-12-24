@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
         pop: document.getElementById('popSound'),
         wish: document.getElementById('wishSound'),
         heart: document.getElementById('heartSound'),
-        countdown: document.getElementById('countdownSound')
+        countdown: document.getElementById('countdownSound'),
+        birthday: document.getElementById('birthdaySound'),
+        magic: document.getElementById('magicSound'),
+        celebrate: document.getElementById('celebrateSound')
     };
 
     function playSound(soundName, volume = 0.3) {
@@ -73,31 +76,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ============ FIREBASE ANALYTICS HELPER ============
+    function logAnalytics(eventName, params = {}) {
+        // Add timestamp to all events
+        params.timestamp = new Date().toISOString();
+
+        if (window.logFirebaseEvent) {
+            window.logFirebaseEvent(eventName, params);
+        } else {
+            // Retry after a short delay (Firebase might not be loaded yet)
+            setTimeout(() => {
+                if (window.logFirebaseEvent) {
+                    window.logFirebaseEvent(eventName, params);
+                }
+            }, 1000);
+        }
+    }
+
     // ============ USER-FRIENDLY TIMING ============
     // CALCULATED: text_length × typing_speed + read_time
     const scenes = [
         { id: 'introScene', duration: 5000, sound: 'start' },           // 5 sec
         { id: 'countdownScene', duration: 5500, sound: 'countdown' },   // 5.5 sec
         { id: 'titleScene', duration: 6000, sound: 'title' },           // 6 sec
-        { id: 'quoteScene', duration: 32000, sound: null },             // 300 chars × 80ms + 8s read = 32 sec
-        { id: 'storyScene', duration: 18000, sound: 'chime' },          // 5 events × 2.5s + 5.5s = 18 sec
-        { id: 'qualitiesScene', duration: 12000, sound: 'chime' },      // 6 cards × 500ms + 9s stay = 12 sec
+        { id: 'quoteScene', duration: 32000, sound: 'chime' },          // 300 chars × 80ms + 8s read = 32 sec
+        { id: 'storyScene', duration: 18000, sound: 'pop' },            // 5 events × 2.5s + 5.5s = 18 sec
+        { id: 'qualitiesScene', duration: 12000, sound: 'slide' },      // 6 cards × 500ms + 9s stay = 12 sec
+        { id: 'jokesScene', duration: 18000, sound: 'pop' },            // Inside jokes carousel
         { id: 'galleryScene', duration: 20000, sound: 'slide' },        // 5 photos × 3.5s + 2.5s = 20 sec
-        { id: 'reasonsScene', duration: 28000, sound: null },           // 3 reasons × 5s gap + typing = 28 sec
+        { id: 'reasonsScene', duration: 28000, sound: 'chime' },        // 3 reasons × 5s gap + typing = 28 sec
         { id: 'letterScene', duration: 38000, sound: 'envelope' },      // envelope 2.5s + 3 paras typing = 38 sec
-        { id: 'birthdayScene', duration: 25000, sound: 'chime' },       // user interaction
-        { id: 'wishScene', duration: 16000, sound: 'wish' },            // 130 chars × 80ms + 5s = 16 sec
+        { id: 'birthdayScene', duration: 25000, sound: 'birthday' },    // Birthday fanfare!
+        { id: 'wishScene', duration: 16000, sound: 'magic' },           // Magical moment
         { id: 'wishesScene', duration: 16000, sound: 'heart' },         // 4 wishes × 3s + 4s = 16 sec
-        { id: 'finaleScene', duration: 60000, sound: 'heart' }          // stay forever
+        { id: 'finaleScene', duration: 60000, sound: 'celebrate' }      // Celebration!
     ];
 
     let currentSceneIndex = -1;
     let galleryInterval = null;
     let wishesInterval = null;
+    let jokesInterval = null;
 
     // ============ CANVAS SETUP ============
+    const shootingStarCanvas = document.getElementById('shootingStarCanvas');
+    const ssCtx = shootingStarCanvas.getContext('2d');
+
     function resizeCanvases() {
-        [ambientCanvas, particleCanvas, confettiCanvas].forEach(canvas => {
+        [ambientCanvas, particleCanvas, confettiCanvas, shootingStarCanvas].forEach(canvas => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
@@ -245,6 +270,123 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animateConfetti);
     }
     animateConfetti();
+
+    // ============ SHOOTING STARS SYSTEM ============
+    const shootingStars = [];
+
+    class ShootingStar {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * shootingStarCanvas.width;
+            this.y = Math.random() * shootingStarCanvas.height * 0.5;
+            this.length = Math.random() * 80 + 40;
+            this.speed = Math.random() * 8 + 4;
+            this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+            this.opacity = 1;
+            this.trail = [];
+            this.active = false;
+        }
+        activate() {
+            this.active = true;
+            this.opacity = 1;
+        }
+        update() {
+            if (!this.active) return;
+
+            this.trail.unshift({ x: this.x, y: this.y, opacity: this.opacity });
+            if (this.trail.length > 15) this.trail.pop();
+
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed;
+            this.opacity -= 0.015;
+
+            if (this.opacity <= 0 || this.x > shootingStarCanvas.width || this.y > shootingStarCanvas.height) {
+                this.reset();
+            }
+        }
+        draw() {
+            if (!this.active || this.opacity <= 0) return;
+
+            // Draw trail
+            this.trail.forEach((point, i) => {
+                const trailOpacity = point.opacity * (1 - i / this.trail.length) * 0.6;
+                const trailSize = 2 * (1 - i / this.trail.length);
+                ssCtx.beginPath();
+                ssCtx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
+                ssCtx.fillStyle = `rgba(255, 255, 255, ${trailOpacity})`;
+                ssCtx.fill();
+            });
+
+            // Draw star head with glow
+            const gradient = ssCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 8);
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+            gradient.addColorStop(0.5, `rgba(212, 168, 83, ${this.opacity * 0.5})`);
+            gradient.addColorStop(1, 'transparent');
+            ssCtx.beginPath();
+            ssCtx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+            ssCtx.fillStyle = gradient;
+            ssCtx.fill();
+        }
+    }
+
+    // Create pool of shooting stars
+    for (let i = 0; i < 5; i++) {
+        shootingStars.push(new ShootingStar());
+    }
+
+    // Randomly activate shooting stars
+    setInterval(() => {
+        const inactiveStar = shootingStars.find(s => !s.active);
+        if (inactiveStar && Math.random() > 0.5) {
+            inactiveStar.reset();
+            inactiveStar.activate();
+        }
+    }, 2000);
+
+    function animateShootingStars() {
+        ssCtx.clearRect(0, 0, shootingStarCanvas.width, shootingStarCanvas.height);
+        shootingStars.forEach(star => {
+            star.update();
+            star.draw();
+        });
+        requestAnimationFrame(animateShootingStars);
+    }
+    animateShootingStars();
+
+    // ============ BACKGROUND MUSIC ============
+    const bgMusic = document.getElementById('bgMusic');
+    const musicToggle = document.getElementById('musicToggle');
+    let musicPlaying = false;
+
+    function startBackgroundMusic() {
+        if (bgMusic && !musicPlaying) {
+            bgMusic.volume = 0.15;
+            bgMusic.play().then(() => {
+                musicPlaying = true;
+                musicToggle.classList.remove('muted');
+            }).catch(() => {
+                musicToggle.classList.add('muted');
+            });
+        }
+    }
+
+    musicToggle.addEventListener('click', () => {
+        if (musicPlaying) {
+            bgMusic.pause();
+            musicPlaying = false;
+            musicToggle.classList.add('muted');
+            logAnalytics('music_toggle', { action: 'mute' });
+        } else {
+            bgMusic.volume = 0.15;
+            bgMusic.play().then(() => {
+                musicPlaying = true;
+                musicToggle.classList.remove('muted');
+                logAnalytics('music_toggle', { action: 'unmute' });
+            }).catch(() => { });
+        }
+    });
 
     // ============ TYPEWRITER - SYNCED SOUND ============
     let typeAudioInterval = null;
@@ -431,10 +573,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         showCard(0);
+        logAnalytics('gallery_view', { photo_index: 0, total_photos: cards.length });
+
         galleryInterval = setInterval(() => {
             current = (current + 1) % cards.length;
             showCard(current);
             playSound('slide', 0.12);
+            logAnalytics('gallery_view', { photo_index: current, total_photos: cards.length });
         }, 3500);  // 3.5 seconds per photo
     }
 
@@ -472,14 +617,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2500);
     }
 
-    // ============ BLOW CANDLES ============
+    // ============ BLOW CANDLES - ENHANCED ============
     function initBirthday() {
         const blowBtn = document.getElementById('blowBtn');
         const candles = document.querySelectorAll('.candle');
 
         blowBtn.addEventListener('click', () => {
+            // Log candle blow interaction
+            logAnalytics('candles_blown', {
+                action: 'blow_candles'
+            });
+
             playSound('blow', 0.4);
 
+            // Blow out candles with staggered effect
             candles.forEach((candle, i) => {
                 const flame = candle.querySelector('.flame');
                 const smoke = candle.querySelector('.smoke');
@@ -487,32 +638,84 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     flame.classList.add('out');
                     if (smoke) smoke.classList.add('active');
-                }, i * 300);  // Slower blow out
+                    playSound('pop', 0.1);
+                }, i * 400);  // Slower, more dramatic
             });
 
             blowBtn.classList.add('hidden');
 
+            // Celebration sequence after all candles out
             setTimeout(() => {
-                playSound('chime', 0.35);
+                playSound('celebrate', 0.4);
                 launchConfetti();
-            }, 1200);
 
-            setTimeout(nextScene, 3500);
+                // Second confetti burst
+                setTimeout(() => {
+                    launchConfetti();
+                }, 800);
+            }, 1500);
+
+            // Add sparkle effect on balloons
+            document.querySelectorAll('.balloon').forEach((balloon, i) => {
+                setTimeout(() => {
+                    balloon.style.animation = 'balloonFloat 2s ease-in-out infinite, partyPop 0.5s ease-out forwards';
+                }, i * 200);
+            });
+
+            setTimeout(nextScene, 4000);
         });
     }
 
-    // ============ WISH SCENE ============
+    // ============ WISH SCENE - ENHANCED ============
     function initWish() {
         const wishMessage = document.getElementById('wishMessage');
+        const wishBgStars = document.getElementById('wishBgStars');
+        const wishFloatingHearts = document.getElementById('wishFloatingHearts');
 
+        // Create floating stars in background
+        for (let i = 0; i < 30; i++) {
+            const star = document.createElement('span');
+            star.textContent = ['⭐', '✨', '🌟', '✦', '✧'][Math.floor(Math.random() * 5)];
+            star.style.cssText = `
+                position: absolute;
+                font-size: ${Math.random() * 15 + 8}px;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: sparkleFloat ${4 + Math.random() * 4}s ease-in-out infinite;
+                animation-delay: ${Math.random() * 3}s;
+                opacity: ${Math.random() * 0.4 + 0.2};
+            `;
+            wishBgStars.appendChild(star);
+        }
+
+        // Create floating hearts
+        const hearts = ['💕', '💗', '💖', '💝', '💓', '❤️'];
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('span');
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.cssText = `
+                position: absolute;
+                font-size: ${Math.random() * 20 + 12}px;
+                left: ${Math.random() * 100}%;
+                bottom: -50px;
+                animation: heartRise ${6 + Math.random() * 4}s ease-out infinite;
+                animation-delay: ${Math.random() * 5}s;
+                opacity: ${Math.random() * 0.5 + 0.3};
+            `;
+            wishFloatingHearts.appendChild(heart);
+        }
+
+        // Typewriter with magical sound
         setTimeout(() => {
-            typeWriter(wishMessage, "Close your eyes. Think of something you really, really want. Now hold that thought... and believe it's already on its way to you. ✨", 80);  // Very slow
+            playSound('wish', 0.2);
+            typeWriter(wishMessage, "Close your eyes. Think of something you really, really want. Now hold that thought... and believe it's already on its way to you. ✨", 80);
         }, 1500);
 
+        // Sparkles around content
         const sparkles = document.getElementById('wishSparkles');
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 25; i++) {
             const sparkle = document.createElement('span');
-            sparkle.textContent = '✨';
+            sparkle.textContent = ['✨', '⭐', '🌟', '✦'][Math.floor(Math.random() * 4)];
             sparkle.style.cssText = `
                 position: absolute;
                 font-size: ${Math.random() * 20 + 10}px;
@@ -526,12 +729,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Sparkle animation
+    // Sparkle and heart animations
     const sparkleStyle = document.createElement('style');
     sparkleStyle.textContent = `
         @keyframes sparkleFloat {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-20px) scale(1.2); }
+        }
+        @keyframes heartRise {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) scale(0.5) rotate(20deg); opacity: 0; }
         }
     `;
     document.head.appendChild(sparkleStyle);
@@ -559,6 +768,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============ HEART RAIN ============
     function initHeartRain() {
+        // Log experience completion
+        logAnalytics('experience_complete', {
+            completed: true,
+            total_scenes: scenes.length
+        });
+
         const heartRain = document.getElementById('heartRain');
         const hearts = ['💕', '💗', '💖', '💝', '❤️'];
 
@@ -580,10 +795,87 @@ document.addEventListener('DOMContentLoaded', () => {
         typeWriter(quoteText, "Today isn't just another day on the calendar. It's the day the universe decided to gift us with someone who makes everything a little more fun, a little more chaotic, and a whole lot more memorable. Whether you're being Nargis, Nargis Kim, or Bandhobi Lolita — you're always unforgettable.", 80);
     }
 
+    // ============ FUN STATS WITH ANIMATED COUNTERS ============
+    function initStats() {
+        const cards = document.querySelectorAll('.stat-card');
+
+        cards.forEach((card, i) => {
+            setTimeout(() => {
+                card.classList.add('show');
+                playSound('pop', 0.08);
+
+                // Animate the counter
+                const numberEl = card.querySelector('.stat-number');
+                const target = parseInt(card.dataset.target);
+                const suffix = card.dataset.suffix || '';
+                const duration = 2000;
+                const start = performance.now();
+
+                function animateNumber(currentTime) {
+                    const elapsed = currentTime - start;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // Easing function for smooth animation
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.floor(target * easeOut);
+
+                    numberEl.textContent = current + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateNumber);
+                    }
+                }
+
+                requestAnimationFrame(animateNumber);
+            }, i * 300);
+        });
+    }
+
+    // ============ INSIDE JOKES CAROUSEL ============
+    function initJokes() {
+        const cards = document.querySelectorAll('.joke-card');
+        const dots = document.querySelectorAll('.joke-dot');
+        let current = 0;
+
+        function showJoke(index) {
+            cards.forEach((card, i) => {
+                card.classList.remove('active', 'prev', 'next');
+                dots[i]?.classList.remove('active');
+
+                if (i === index) {
+                    card.classList.add('active');
+                    dots[i]?.classList.add('active');
+                } else if (i === (index - 1 + cards.length) % cards.length) {
+                    card.classList.add('prev');
+                } else if (i === (index + 1) % cards.length) {
+                    card.classList.add('next');
+                }
+            });
+        }
+
+        showJoke(0);
+
+        jokesInterval = setInterval(() => {
+            current = (current + 1) % cards.length;
+            showJoke(current);
+            playSound('pop', 0.08);
+        }, 3000);
+
+        // Allow manual navigation
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                current = i;
+                showJoke(current);
+                playSound('pop', 0.1);
+            });
+        });
+    }
+
     // ============ SCENE MANAGEMENT ============
     function showScene(index) {
         if (galleryInterval) { clearInterval(galleryInterval); galleryInterval = null; }
         if (wishesInterval) { clearInterval(wishesInterval); wishesInterval = null; }
+        if (jokesInterval) { clearInterval(jokesInterval); jokesInterval = null; }
 
         document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
 
@@ -591,6 +883,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const sceneEl = document.getElementById(scene.id);
 
         if (sceneEl) {
+            // Log scene view to Firebase Analytics
+            logAnalytics('scene_view', {
+                scene_name: scene.id,
+                scene_index: index,
+                scene_total: scenes.length
+            });
+
             setTimeout(() => {
                 sceneEl.classList.add('active');
                 if (scene.sound) playSound(scene.sound, 0.25);
@@ -600,13 +899,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'quoteScene': initQuote(); break;
                     case 'storyScene': initStory(); break;
                     case 'qualitiesScene': initQualities(); break;
+                    case 'statsScene': initStats(); break;
+                    case 'jokesScene': initJokes(); break;
                     case 'galleryScene': setTimeout(initGallery, 500); break;
                     case 'reasonsScene': initReasons(); break;
                     case 'letterScene': openEnvelope(); break;
                     case 'birthdayScene': initBirthday(); break;
                     case 'wishScene': initWish(); launchConfetti(); break;
                     case 'wishesScene': initWishesCarousel(); break;
-                    case 'finaleScene': initHeartRain(); break;
+                    case 'finaleScene': initHeartRain(); launchConfetti(); break;
                 }
             }, 300);
         }
@@ -625,6 +926,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============ START ============
     startBtn.addEventListener('click', () => {
+        // Log experience start
+        logAnalytics('experience_start', {
+            user_agent: navigator.userAgent,
+            screen_width: window.innerWidth,
+            screen_height: window.innerHeight
+        });
+
         // Unlock all audio for mobile (browser policy requirement)
         Object.values(sounds).forEach(audio => {
             if (audio) {
@@ -636,6 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         playSound('start', 0.3);
+        startBackgroundMusic(); // Start the ambient music
         startScreen.classList.add('hidden');
         setTimeout(() => {
             experience.classList.add('active');
@@ -645,6 +954,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============ REPLAY ============
     document.getElementById('replayBtn')?.addEventListener('click', () => {
+        // Log replay event
+        logAnalytics('experience_replay', {
+            completed: true
+        });
+
         playSound('slide', 0.2);
         currentSceneIndex = -1;
         confetti.length = 0;
@@ -654,6 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.smoke').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.quality-card').forEach(c => c.classList.remove('show'));
         document.querySelectorAll('.reason-item').forEach(r => r.classList.remove('show'));
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('show'));
+        document.querySelectorAll('.joke-card').forEach(c => c.classList.remove('active', 'prev', 'next'));
         document.getElementById('blowBtn')?.classList.remove('hidden');
         document.getElementById('envelope')?.classList.remove('opening', 'open');
         document.getElementById('letter')?.classList.remove('show');

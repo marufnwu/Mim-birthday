@@ -42,6 +42,18 @@
     <canvas id="ambientCanvas"></canvas>
     <canvas id="particleCanvas"></canvas>
     <canvas id="confettiCanvas"></canvas>
+    <canvas id="shootingStarCanvas"></canvas>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-dreaming-big-31.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Toggle Button -->
+    <button class="music-toggle" id="musicToggle" title="Toggle Music">
+        <span class="music-on">🎵</span>
+        <span class="music-off">🔇</span>
+    </button>
 
     <!-- Distinct Smooth Short Sound Effects -->
     <audio id="startSound" preload="auto">
@@ -53,8 +65,8 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2574/2574-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="slideSound" preload="auto">
-        <!-- Soft slide transition -->
-        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
+        <!-- Soft woosh slide -->
+        <source src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="envelopeSound" preload="auto">
         <!-- Paper envelope opening -->
@@ -73,7 +85,7 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2053/2053-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="chimeSound" preload="auto">
-        <!-- Soft magical sparkle (replacement for loud chime) -->
+        <!-- Soft magical sparkle -->
         <source src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="popSound" preload="auto">
@@ -81,8 +93,8 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="wishSound" preload="auto">
-        <!-- Magic sparkle -->
-        <source src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" type="audio/mpeg">
+        <!-- Dreamy magic shimmer -->
+        <source src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" type="audio/mpeg">
     </audio>
     <audio id="heartSound" preload="auto">
         <!-- Warm heartbeat tone -->
@@ -91,6 +103,18 @@
     <audio id="countdownSound" preload="auto">
         <!-- Soft countdown tick -->
         <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="birthdaySound" preload="auto">
+        <!-- Birthday celebration fanfare -->
+        <source src="https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="magicSound" preload="auto">
+        <!-- Magical fairy dust -->
+        <source src="https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="celebrateSound" preload="auto">
+        <!-- Celebration success -->
+        <source src="https://assets.mixkit.co/active_storage/sfx/2021/2021-preview.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Cursor Glow -->
@@ -114,7 +138,7 @@
             </div>
             <h1>The Arobi Mim Story</h1>
             <p>A Cinematic Birthday Experience</p>
-            <button class="start-btn" id="startBtn">Stats Experience</button>
+            <button class="start-btn" id="startBtn">Start Experience</button>
         </div>
         <div class="floating-elements">
             <span class="float-element">✨</span>
@@ -327,6 +351,45 @@
             </div>
         </section>
 
+        <!-- Scene 6.7: Inside Jokes -->
+        <section class="scene jokes-scene" id="jokesScene">
+            <h2 class="section-header">Things Only We Understand</h2>
+            <div class="jokes-carousel">
+                <div class="joke-card" data-joke="0">
+                    <div class="joke-emoji">🎭</div>
+                    <p class="joke-text">"Nargis mode: ACTIVATED"</p>
+                    <span class="joke-context">Every time you go full dramatic</span>
+                </div>
+                <div class="joke-card" data-joke="1">
+                    <div class="joke-emoji">☕</div>
+                    <p class="joke-text">"Bandhobi Lolita cha khabe?"</p>
+                    <span class="joke-context">The eternal question</span>
+                </div>
+                <div class="joke-card" data-joke="2">
+                    <div class="joke-emoji">🎬</div>
+                    <p class="joke-text">"Nargis Kim entered the chat"</p>
+                    <span class="joke-context">When chaos begins</span>
+                </div>
+                <div class="joke-card" data-joke="3">
+                    <div class="joke-emoji">🌙</div>
+                    <p class="joke-text">"Mim er story dekhte hobe..."</p>
+                    <span class="joke-context">Daily ritual complete</span>
+                </div>
+                <div class="joke-card" data-joke="4">
+                    <div class="joke-emoji">💫</div>
+                    <p class="joke-text">"Arobi Mim supremacy!"</p>
+                    <span class="joke-context">Because obviously</span>
+                </div>
+            </div>
+            <div class="jokes-nav">
+                <span class="joke-dot active" data-index="0"></span>
+                <span class="joke-dot" data-index="1"></span>
+                <span class="joke-dot" data-index="2"></span>
+                <span class="joke-dot" data-index="3"></span>
+                <span class="joke-dot" data-index="4"></span>
+            </div>
+        </section>
+
         <!-- Scene 6: Photo Gallery -->
         <section class="scene gallery-scene" id="galleryScene">
             <div class="gallery-header">
@@ -441,10 +504,34 @@
             </div>
         </section>
 
-        <!-- Scene 9: Birthday Celebration -->
+        <!-- Scene 9: Birthday Celebration - ENHANCED -->
         <section class="scene birthday-scene" id="birthdayScene">
+            <!-- Floating Balloons -->
+            <div class="balloons-container">
+                <div class="balloon balloon-1">🎈</div>
+                <div class="balloon balloon-2">🎈</div>
+                <div class="balloon balloon-3">🎈</div>
+                <div class="balloon balloon-4">🎈</div>
+                <div class="balloon balloon-5">🎈</div>
+            </div>
+
+            <!-- Party Decorations -->
+            <div class="party-decorations">
+                <span class="party-item">🎉</span>
+                <span class="party-item">🎊</span>
+                <span class="party-item">✨</span>
+                <span class="party-item">🎁</span>
+            </div>
+
             <div class="birthday-content">
                 <div class="cake-container">
+                    <!-- Sparkles around cake -->
+                    <div class="cake-sparkles">
+                        <span class="cake-sparkle">✦</span>
+                        <span class="cake-sparkle">✧</span>
+                        <span class="cake-sparkle">✦</span>
+                        <span class="cake-sparkle">✧</span>
+                    </div>
                     <div class="cake">
                         <div class="cake-top">
                             <div class="candle-group">
@@ -480,11 +567,20 @@
                                 </div>
                             </div>
                             <div class="frosting"></div>
+                            <!-- Cake decorations -->
+                            <div class="cake-dots">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
                         </div>
-                        <div class="cake-middle"></div>
-                        <div class="cake-bottom"></div>
+                        <div class="cake-middle">
+                            <div class="cake-stripe"></div>
+                        </div>
+                        <div class="cake-bottom">
+                            <div class="cake-base-decor"></div>
+                        </div>
                     </div>
                     <div class="cake-glow"></div>
+                    <div class="cake-plate"></div>
                 </div>
                 <div class="birthday-text">
                     <span class="bday-line1">Happy Birthday</span>
@@ -493,19 +589,49 @@
                 </div>
             </div>
             <button class="blow-btn" id="blowBtn">
-                <span>🎂 Blow the Candles!</span>
+                <span class="blow-icon">💨</span>
+                <span>Blow the Candles!</span>
             </button>
         </section>
 
-        <!-- Scene 10: Wish -->
+        <!-- Scene 10: Wish - ENHANCED -->
         <section class="scene wish-scene" id="wishScene">
+            <!-- Magical background effects -->
+            <div class="wish-bg-stars" id="wishBgStars"></div>
+            <div class="wish-floating-hearts" id="wishFloatingHearts"></div>
+
             <div class="wish-content">
                 <div class="wish-sparkles" id="wishSparkles"></div>
-                <h2 class="wish-title">🌟 Make a Wish! 🌟</h2>
-                <div class="wish-heart">
-                    <span>💝</span>
+
+                <!-- Orbiting stars -->
+                <div class="wish-orbit">
+                    <div class="orbit-star">⭐</div>
+                    <div class="orbit-star">🌟</div>
+                    <div class="orbit-star">✨</div>
                 </div>
+
+                <h2 class="wish-title">
+                    <span class="wish-star-left">✨</span>
+                    Make a Wish!
+                    <span class="wish-star-right">✨</span>
+                </h2>
+
+                <div class="wish-heart-container">
+                    <div class="wish-heart-glow"></div>
+                    <div class="wish-heart">
+                        <span>💝</span>
+                    </div>
+                    <div class="wish-heart-ring"></div>
+                    <div class="wish-heart-ring ring-2"></div>
+                </div>
+
                 <p class="wish-message" id="wishMessage"></p>
+
+                <!-- Magical dust -->
+                <div class="magic-dust">
+                    <span>✦</span><span>✧</span><span>✦</span>
+                    <span>✧</span><span>✦</span><span>✧</span>
+                </div>
             </div>
         </section>
 
@@ -553,6 +679,41 @@
         </section>
 
     </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAaXu06u4Sb-GJJygRuJ1L7DgFgJgFHuLk",
+            authDomain: "mim-birthday.firebaseapp.com",
+            projectId: "mim-birthday",
+            storageBucket: "mim-birthday.firebasestorage.app",
+            messagingSenderId: "121193994386",
+            appId: "1:121193994386:web:ccd28de4a9937bc0b5ae4b",
+            measurementId: "G-6TZZYYBWCC"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Make logEvent available globally for the main script
+        window.firebaseAnalytics = analytics;
+        window.logFirebaseEvent = (eventName, params = {}) => {
+            logEvent(analytics, eventName, params);
+            console.log(`📊 Firebase: ${eventName}`, params);
+        };
+
+        // Log page visit
+        window.logFirebaseEvent('page_view', {
+            page_title: 'Mim Birthday Experience',
+            page_location: window.location.href
+        });
+    </script>
 
     <script src="script.js"></script>
 </body>
