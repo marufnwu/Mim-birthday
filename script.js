@@ -543,9 +543,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============ REASONS WITH TYPEWRITER ============
     function initReasons() {
         const reasons = [
-            "The way you handle everything with such responsibility and care — it's rare and truly admirable.",
-            "You're the friend who remembers the little things, the one who shows up when it matters, the one who cares when nobody's watching.",
-            "The world would be so boring without your energy, your ideas, and honestly... your chaos. Never change."
+            "You've been through storms that would have broken most people, yet here you are — standing stronger than ever. That strength? It's inspiring.",
+            "You never gave up on your dreams, even when the world tried to convince you otherwise. And look at you now — living proof that persistence pays off.",
+            "No matter how much life changes around you, one thing stays the same: your heart. The way you care for others, without any ego — that's rare and beautiful."
         ];
 
         const items = document.querySelectorAll('.reason-item');
@@ -615,11 +615,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Slow typing for letter - 65ms per char
             setTimeout(() => {
-                typeWriter(body1, "I know I'm not always good with words, but I wanted to try anyway because you deserve it.", 65, () => {
+                typeWriter(body1, "I've watched you go through things that would have crushed anyone else. But you? You kept going. You kept fighting. You kept dreaming.", 65, () => {
                     setTimeout(() => {
-                        typeWriter(body2, "You're not just another year older — you're another year wiser, stronger, and honestly, even more iconic than before.", 65, () => {
+                        typeWriter(body2, "And now, you're out there — chasing the life you always wanted. I'm so proud of how far you've come, even if some things have changed along the way.", 65, () => {
                             setTimeout(() => {
-                                typeWriter(body3, "So here's to you — to your dreams, your crazy ideas, your midnight thoughts, and everything that makes you, YOU. Happy Birthday, Mim.", 65);
+                                typeWriter(body3, "Just remember who you are at your core — that caring, beautiful soul who puts others first. Never lose that. Happy Birthday, Mim.", 65);
                             }, 800);  // Pause between paragraphs
                         });
                     }, 800);
