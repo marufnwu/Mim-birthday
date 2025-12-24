@@ -1,738 +1,138 @@
-<!-- Copyright (c) 2025 Maruf Ahmed <dev00.maruf@gmail.com> -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- SEO Meta Tags -->
-    <title>For Mim ✨ | A Story Worth Watching</title>
-    <meta name="description"
-        content="Dear Mim, some stories are meant to be experienced, not told. This one is yours. Enter when you're ready.">
-    <meta name="keywords" content="story, experience, surprise, special, memories, mim">
-    <meta name="author" content="Maruf Ahmed <dev00.maruf@gmail.com>">
-    <meta name="robots" content="noindex, nofollow">
-
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="For Mim ✨">
-    <meta property="og:description" content="A cinematic experience crafted just for Mim. Are you ready?">
-    <meta property="og:image" content="assets/preview.jpg">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="For Mim ✨">
-    <meta name="twitter:description" content="Some moments deserve to be unforgettable. This is one of them, Mim.">
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#08080c">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <!-- Fonts -->
+    <title>Site Removed</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Italiana&family=Tangerine:wght@400;700&family=Montserrat:wght@300;400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+            background: var(--bg-deepest);
+        }
+
+        .removed-container {
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 0.5s forwards;
+            position: relative;
+            max-width: 800px;
+        }
+
+        .icon {
+            font-size: 3rem;
+            color: var(--rose-deep);
+            margin-bottom: 2rem;
+            display: block;
+            opacity: 0.7;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--gold-primary);
+            margin-bottom: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(212, 168, 83, 0.2);
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+            margin: 1.5rem auto;
+        }
+
+        p.main-msg {
+            font-family: var(--font-serif);
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--text-secondary);
+            font-style: italic;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        p.extra-msg {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            line-height: 1.6;
+            opacity: 0.6;
+            margin-top: 1rem;
+        }
+
+        /* Subtle background glow similar to the main site */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(139, 77, 92, 0.05), transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Ambient & Particle Canvas -->
-    <canvas id="ambientCanvas"></canvas>
-    <canvas id="particleCanvas"></canvas>
-    <canvas id="confettiCanvas"></canvas>
-    <canvas id="shootingStarCanvas"></canvas>
+    <div class="bg-glow"></div>
 
-    <!-- Background Music - Very smooth ambient, no beats/bass -->
-    <audio id="bgMusic" loop preload="auto">
-        <!-- Soft ambient drone - very gentle and smooth -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/soundtrack.ogg"
-            type="audio/ogg">
-    </audio>
-
-    <!-- Music Toggle Button -->
-    <button class="music-toggle" id="musicToggle" title="Toggle Music">
-        <span class="music-on">🎵</span>
-        <span class="music-off">🔇</span>
-    </button>
-
-    <!-- Distinct Smooth Short Sound Effects - Using Google Storage CDN -->
-    <audio id="startSound" preload="auto">
-        <!-- Soft transition swoosh -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="titleSound" preload="auto">
-        <!-- Gentle reveal tone -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="slideSound" preload="auto">
-        <!-- Soft woosh slide -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="envelopeSound" preload="auto">
-        <!-- Paper envelope opening -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="letterSound" preload="auto">
-        <!-- Paper unfold -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="typeSound" preload="auto">
-        <!-- Very soft keyboard tick -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="blowSound" preload="auto">
-        <!-- Gentle wind blow -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/Collision8-Bit.ogg" type="audio/ogg">
-    </audio>
-    <audio id="chimeSound" preload="auto">
-        <!-- Soft magical sparkle -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="popSound" preload="auto">
-        <!-- Soft bubble pop -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/Collision8-Bit.ogg" type="audio/ogg">
-    </audio>
-    <audio id="wishSound" preload="auto">
-        <!-- Dreamy magic shimmer -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="heartSound" preload="auto">
-        <!-- Warm heartbeat tone -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="countdownSound" preload="auto">
-        <!-- Soft countdown tick -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/eatpellet.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="birthdaySound" preload="auto">
-        <!-- Birthday celebration fanfare -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg"
-            type="audio/ogg">
-    </audio>
-    <audio id="magicSound" preload="auto">
-        <!-- Magical fairy dust -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/Collision8-Bit.ogg" type="audio/ogg">
-    </audio>
-    <audio id="celebrateSound" preload="auto">
-        <!-- Celebration success -->
-        <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg"
-            type="audio/ogg">
-    </audio>
-
-    <!-- Cursor Glow -->
-    <div class="cursor-glow" id="cursorGlow"></div>
-
-    <!-- Start Screen -->
-    <div class="start-screen" id="startScreen">
-        <div class="start-pattern"></div>
-
-        <!-- Loader -->
-        <div class="loader" id="pageLoader">
-            <div class="spinner"></div>
-            <div class="loader-text">Loading Memories...</div>
-        </div>
-
-        <!-- Content (Hidden initially) -->
-        <div class="start-content hidden" id="startContent">
-            <div class="logo-diamond">
-                <div class="diamond-shape"></div>
-                <span class="logo-text">M</span>
-            </div>
-            <h1>The Arobi Mim Story</h1>
-            <p>A Cinematic Birthday Experience</p>
-            <button class="start-btn" id="startBtn">Start Experience</button>
-        </div>
-        <div class="floating-elements">
-            <span class="float-element">✨</span>
-            <span class="float-element">💕</span>
-            <span class="float-element">🌟</span>
-            <span class="float-element">✧</span>
-        </div>
+    <div class="removed-container">
+        <span class="icon">🕸️</span>
+        <h1>Site Removed</h1>
+        <div class="divider"></div>
+        <p class="main-msg">You are lost.</p>
+        <p class="extra-msg">
+            "New environments offer new freedoms—free mixing, new tastes, new rituals.<br>
+            But culture isn’t a passport stamp;<br>
+            it’s something you either carry quietly or lose slowly."
+        </p>
     </div>
-
-    <!-- Main Experience -->
-    <main class="experience" id="experience">
-
-        <!-- Scene 1: Intro -->
-        <section class="scene intro-scene" id="introScene">
-            <div class="intro-content">
-                <div class="intro-logo">✧</div>
-                <p class="intro-credit">A Maruf Ahmed Production</p>
-                <div class="intro-line"></div>
-                <p class="intro-year">2025</p>
-            </div>
-        </section>
-
-        <!-- Scene 2: Countdown -->
-        <section class="scene countdown-scene" id="countdownScene">
-            <div class="countdown-content">
-                <p class="countdown-label">The special day is here</p>
-                <div class="countdown-number" id="countdownNum">3</div>
-                <p class="countdown-sub">Get ready...</p>
-            </div>
-        </section>
-
-        <!-- Scene 3: Title -->
-        <section class="scene title-scene" id="titleScene">
-            <div class="title-3d-container">
-                <div class="title-layer layer-back">The Arobi Mim Story</div>
-                <div class="title-layer layer-mid">The Arobi Mim Story</div>
-                <div class="title-layer layer-front">
-                    <span class="title-the">The</span>
-                    <span class="title-name">Arobi Mim</span>
-                    <span class="title-story">Story</span>
-                </div>
-            </div>
-            <div class="title-tagline">
-                <span class="star">★</span>
-                <span class="tagline-text">A Birthday Celebration</span>
-                <span class="star">★</span>
-            </div>
-        </section>
-
-        <!-- Scene 4: Quote -->
-        <section class="scene quote-scene" id="quoteScene">
-            <div class="quote-container">
-                <div class="quote-mark">"</div>
-                <p class="quote-text" id="quoteText"></p>
-                <div class="quote-author">— For You</div>
-            </div>
-        </section>
-
-        <!-- Scene 5: How We Connected - VISUAL ANIMATED STORY -->
-        <section class="scene story-scene" id="storyScene">
-            <h2 class="section-header">How It All Started</h2>
-
-            <div class="visual-story">
-
-                <!-- CHAPTER 1: Facebook Discovery -->
-                <div class="story-chapter" data-chapter="1">
-                    <div class="chapter-visual">
-                        <div class="fb-card">
-                            <div class="fb-cover"></div>
-                            <div class="fb-avatar">👤</div>
-                            <div class="fb-name">Arobi Mim</div>
-                            <div class="fb-button" id="fbRequestBtn">
-                                <span class="btn-text">Add Friend</span>
-                                <span class="btn-sending">Sending...</span>
-                                <span class="btn-pending">Pending ⏳</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chapter-result">
-                        <span class="result-icon">😔</span>
-                        <span class="result-text">No response...</span>
-                    </div>
-                </div>
-
-                <!-- CHAPTER 2: Instagram Chase -->
-                <div class="story-chapter" data-chapter="2">
-                    <div class="chapter-visual">
-                        <div class="ig-card">
-                            <div class="ig-header">
-                                <div class="ig-avatar-ring">
-                                    <div class="ig-avatar">📷</div>
-                                </div>
-                                <div class="ig-info">
-                                    <div class="ig-username">arobi_mim</div>
-                                    <div class="ig-stats">Posts • Followers • Following</div>
-                                </div>
-                            </div>
-                            <div class="ig-button" id="igFollowBtn">
-                                <span class="btn-follow">Follow</span>
-                                <span class="btn-following">Following ✓</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chapter-result">
-                        <span class="result-icon">💔</span>
-                        <span class="result-text">Doesn't follow back</span>
-                    </div>
-                </div>
-
-                <!-- CHAPTER 3: Story Watching -->
-                <div class="story-chapter" data-chapter="3">
-                    <div class="chapter-visual">
-                        <div class="stories-container">
-                            <div class="story-ring" data-story="1">
-                                <div class="story-progress"></div>
-                                <span>😢</span>
-                            </div>
-                            <div class="story-ring" data-story="2">
-                                <div class="story-progress"></div>
-                                <span>📸</span>
-                            </div>
-                            <div class="story-ring" data-story="3">
-                                <div class="story-progress"></div>
-                                <span>🌙</span>
-                            </div>
-                            <div class="story-ring" data-story="4">
-                                <div class="story-progress"></div>
-                                <span>💭</span>
-                            </div>
-                        </div>
-                        <div class="watching-indicator">
-                            <span class="eye-icon">👁️</span>
-                            <span>Watching silently...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CHAPTER 4: The Loop -->
-                <div class="story-chapter" data-chapter="4">
-                    <div class="chapter-visual">
-                        <div class="loop-container">
-                            <div class="loop-btn cancel-btn">
-                                <span>❌ Cancel Request</span>
-                            </div>
-                            <div class="loop-arrow">↓</div>
-                            <div class="loop-btn send-btn">
-                                <span>✉️ Send Again</span>
-                            </div>
-                            <div class="loop-arrow">↓</div>
-                            <div class="loop-indicator">🔄 Repeat...</div>
-                        </div>
-                    </div>
-                    <div class="chapter-result loop-text">
-                        <span class="result-text">The endless struggle...</span>
-                    </div>
-                </div>
-
-                <!-- CHAPTER 5: Victory! -->
-                <div class="story-chapter victory" data-chapter="5">
-                    <div class="chapter-visual">
-                        <div class="notification-card">
-                            <div class="notif-icon">🔔</div>
-                            <div class="notif-body">
-                                <div class="notif-title">Facebook</div>
-                                <div class="notif-message"><b>Arobi Mim</b> accepted your friend request!</div>
-                            </div>
-                            <div class="notif-time">Just now</div>
-                        </div>
-                        <div class="victory-burst">🎉</div>
-                        <div class="victory-burst delay">✨</div>
-                    </div>
-                    <div class="chapter-result success">
-                        <span class="result-icon">💕</span>
-                        <span class="result-text">Finally... Friends!</span>
-                    </div>
-                </div>
-            </div>
-
-            <p class="story-caption">And the rest... is history 💕</p>
-        </section>
-
-        <!-- Scene 6: Qualities -->
-        <section class="scene qualities-scene" id="qualitiesScene">
-            <h2 class="section-header">Why You're One of a Kind</h2>
-            <div class="qualities-grid">
-                <div class="quality-card" data-delay="0">
-                    <span class="quality-emoji">🌙</span>
-                    <span class="quality-text">Your strength — the way you get back up no matter what</span>
-                </div>
-                <div class="quality-card" data-delay="1">
-                    <span class="quality-emoji">🎭</span>
-                    <span class="quality-text">Your dramatic "Nargis" moments</span>
-                </div>
-                <div class="quality-card" data-delay="2">
-                    <span class="quality-emoji">☕</span>
-                    <span class="quality-text">Your Bandhobi Lolita energy</span>
-                </div>
-                <div class="quality-card" data-delay="3">
-                    <span class="quality-emoji">🎵</span>
-                    <span class="quality-text">Your random song bursts that make us smile</span>
-                </div>
-                <div class="quality-card" data-delay="4">
-                    <span class="quality-emoji">🌈</span>
-                    <span class="quality-text">How you never gave up on your dreams, even when it took years</span>
-                </div>
-                <div class="quality-card" data-delay="5">
-                    <span class="quality-emoji">✨</span>
-                    <span class="quality-text">Your heart — always putting others first, without expecting anything
-                        back</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Scene 6.7: Inside Jokes -->
-        <section class="scene jokes-scene" id="jokesScene">
-            <h2 class="section-header">Things Only We Understand</h2>
-            <div class="jokes-carousel">
-                <div class="joke-card" data-joke="0">
-                    <div class="joke-emoji">🎭</div>
-                    <p class="joke-text">"Nargis mode: ACTIVATED"</p>
-                    <span class="joke-context">Every time you go full dramatic</span>
-                </div>
-                <div class="joke-card" data-joke="1">
-                    <div class="joke-emoji">☕</div>
-                    <p class="joke-text">"Bandhobi Lolita cha khabe?"</p>
-                    <span class="joke-context">The eternal question</span>
-                </div>
-                <div class="joke-card" data-joke="2">
-                    <div class="joke-emoji">🎬</div>
-                    <p class="joke-text">"Nargis Kim entered the chat"</p>
-                    <span class="joke-context">When chaos begins</span>
-                </div>
-                <div class="joke-card" data-joke="3">
-                    <div class="joke-emoji">🌙</div>
-                    <p class="joke-text">"Mim er story dekhte hobe..."</p>
-                    <span class="joke-context">Daily ritual complete</span>
-                </div>
-                <div class="joke-card" data-joke="4">
-                    <div class="joke-emoji">💫</div>
-                    <p class="joke-text">"Arobi Mim supremacy!"</p>
-                    <span class="joke-context">Because obviously</span>
-                </div>
-            </div>
-            <div class="jokes-nav">
-                <span class="joke-dot active" data-index="0"></span>
-                <span class="joke-dot" data-index="1"></span>
-                <span class="joke-dot" data-index="2"></span>
-                <span class="joke-dot" data-index="3"></span>
-                <span class="joke-dot" data-index="4"></span>
-            </div>
-        </section>
-
-        <!-- Scene 6: Photo Gallery -->
-        <section class="scene gallery-scene" id="galleryScene">
-            <div class="gallery-header">
-                <span class="gallery-icon">◈</span>
-                <span class="gallery-title">Precious Moments</span>
-                <span class="gallery-icon">◈</span>
-            </div>
-            <div class="gallery-3d" id="gallery3d">
-                <div class="photo-card" data-index="0">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="assets/photos/photo1.jpg" alt="Memory 1">
-                        </div>
-                        <div class="card-back">
-                            <span class="card-num">01</span>
-                            <p>Nargis era 💕</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="photo-card" data-index="1">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="assets/photos/photo2.jpg" alt="Memory 2">
-                        </div>
-                        <div class="card-back">
-                            <span class="card-num">02</span>
-                            <p>Bandhobi Lolita vibes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="photo-card" data-index="2">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="assets/photos/photo3.jpg" alt="Memory 3">
-                        </div>
-                        <div class="card-back">
-                            <span class="card-num">03</span>
-                            <p>That radiant smile</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="photo-card" data-index="3">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="assets/photos/photo4.jpg" alt="Memory 4">
-                        </div>
-                        <div class="card-back">
-                            <span class="card-num">04</span>
-                            <p>Precious adventures</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="photo-card" data-index="4">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="assets/photos/photo5.jpg" alt="Memory 5">
-                        </div>
-                        <div class="card-back">
-                            <span class="card-num">05</span>
-                            <p>The journey continues</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="gallery-nav">
-                <span class="nav-dot active"></span>
-                <span class="nav-dot"></span>
-                <span class="nav-dot"></span>
-                <span class="nav-dot"></span>
-                <span class="nav-dot"></span>
-            </div>
-        </section>
-
-        <!-- Scene 7: Reasons Why -->
-        <section class="scene reasons-scene" id="reasonsScene">
-            <h2 class="section-header">Reasons Why You're Amazing</h2>
-            <div class="reasons-list">
-                <div class="reason-item">
-                    <span class="reason-num">1</span>
-                    <p class="reason-text" id="reason1"></p>
-                </div>
-                <div class="reason-item">
-                    <span class="reason-num">2</span>
-                    <p class="reason-text" id="reason2"></p>
-                </div>
-                <div class="reason-item">
-                    <span class="reason-num">3</span>
-                    <p class="reason-text" id="reason3"></p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Scene 8: Letter -->
-        <section class="scene letter-scene" id="letterScene">
-            <div class="envelope" id="envelope">
-                <div class="envelope-back"></div>
-                <div class="envelope-front">
-                    <div class="envelope-flap"></div>
-                    <div class="envelope-seal">💕</div>
-                </div>
-            </div>
-            <div class="letter" id="letter">
-                <div class="letter-paper">
-                    <p class="letter-date">December 25, 2025</p>
-                    <p class="letter-greeting">Dear Arobi Mim,</p>
-                    <p class="letter-body" id="letterBody1"></p>
-                    <p class="letter-body" id="letterBody2"></p>
-                    <p class="letter-body" id="letterBody3"></p>
-                    <p class="letter-closing">With all my love,</p>
-                    <p class="letter-signature">Maruf ♥</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Scene 9: Birthday Celebration - ENHANCED -->
-        <section class="scene birthday-scene" id="birthdayScene">
-            <!-- Floating Balloons -->
-            <div class="balloons-container">
-                <div class="balloon balloon-1">🎈</div>
-                <div class="balloon balloon-2">🎈</div>
-                <div class="balloon balloon-3">🎈</div>
-                <div class="balloon balloon-4">🎈</div>
-                <div class="balloon balloon-5">🎈</div>
-            </div>
-
-            <!-- Party Decorations -->
-            <div class="party-decorations">
-                <span class="party-item">🎉</span>
-                <span class="party-item">🎊</span>
-                <span class="party-item">✨</span>
-                <span class="party-item">🎁</span>
-            </div>
-
-            <div class="birthday-content">
-                <div class="cake-container">
-                    <!-- Sparkles around cake -->
-                    <div class="cake-sparkles">
-                        <span class="cake-sparkle">✦</span>
-                        <span class="cake-sparkle">✧</span>
-                        <span class="cake-sparkle">✦</span>
-                        <span class="cake-sparkle">✧</span>
-                    </div>
-                    <div class="cake">
-                        <div class="cake-top">
-                            <div class="candle-group">
-                                <div class="candle c1">
-                                    <div class="flame">
-                                        <div class="glow"></div>
-                                    </div>
-                                    <div class="smoke">
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                    </div>
-                                </div>
-                                <div class="candle c2">
-                                    <div class="flame">
-                                        <div class="glow"></div>
-                                    </div>
-                                    <div class="smoke">
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                    </div>
-                                </div>
-                                <div class="candle c3">
-                                    <div class="flame">
-                                        <div class="glow"></div>
-                                    </div>
-                                    <div class="smoke">
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                        <div class="smoke-particle"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="frosting"></div>
-                            <!-- Cake decorations -->
-                            <div class="cake-dots">
-                                <span></span><span></span><span></span><span></span><span></span>
-                            </div>
-                        </div>
-                        <div class="cake-middle">
-                            <div class="cake-stripe"></div>
-                        </div>
-                        <div class="cake-bottom">
-                            <div class="cake-base-decor"></div>
-                        </div>
-                    </div>
-                    <div class="cake-glow"></div>
-                    <div class="cake-plate"></div>
-                </div>
-                <div class="birthday-text">
-                    <span class="bday-line1">Happy Birthday</span>
-                    <span class="bday-name">Arobi Mim</span>
-                    <span class="bday-date">December 25</span>
-                </div>
-            </div>
-            <button class="blow-btn" id="blowBtn">
-                <span class="blow-icon">💨</span>
-                <span>Blow the Candles!</span>
-            </button>
-        </section>
-
-        <!-- Scene 10: Wish - ENHANCED -->
-        <section class="scene wish-scene" id="wishScene">
-            <!-- Magical background effects -->
-            <div class="wish-bg-stars" id="wishBgStars"></div>
-            <div class="wish-floating-hearts" id="wishFloatingHearts"></div>
-
-            <div class="wish-content">
-                <div class="wish-sparkles" id="wishSparkles"></div>
-
-                <!-- Orbiting stars -->
-                <div class="wish-orbit">
-                    <div class="orbit-star">⭐</div>
-                    <div class="orbit-star">🌟</div>
-                    <div class="orbit-star">✨</div>
-                </div>
-
-                <h2 class="wish-title">
-                    <span class="wish-star-left">✨</span>
-                    Make a Wish!
-                    <span class="wish-star-right">✨</span>
-                </h2>
-
-                <div class="wish-heart-container">
-                    <div class="wish-heart-glow"></div>
-                    <div class="wish-heart">
-                        <span>💝</span>
-                    </div>
-                    <div class="wish-heart-ring"></div>
-                    <div class="wish-heart-ring ring-2"></div>
-                </div>
-
-                <p class="wish-message" id="wishMessage"></p>
-
-                <!-- Magical dust -->
-                <div class="magic-dust">
-                    <span>✦</span><span>✧</span><span>✦</span>
-                    <span>✧</span><span>✦</span><span>✧</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Scene 11: Birthday Wishes -->
-        <section class="scene wishes-scene" id="wishesScene">
-            <h2 class="section-header">From My Heart to Yours</h2>
-            <div class="wishes-carousel">
-                <div class="wish-card active">
-                    <span class="wish-icon">🌍</span>
-                    <p>May you find peace and happiness in this new chapter of your life</p>
-                </div>
-                <div class="wish-card">
-                    <span class="wish-icon">🎯</span>
-                    <p>May you always remember who you truly are, no matter where life takes you</p>
-                </div>
-                <div class="wish-card">
-                    <span class="wish-icon">🪄</span>
-                    <p>May the storms of the past only make you appreciate the sunshine ahead</p>
-                </div>
-                <div class="wish-card">
-                    <span class="wish-icon">💝</span>
-                    <p>May your caring heart always be surrounded by people who truly appreciate it</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Scene 12: Finale -->
-        <section class="scene finale-scene" id="finaleScene">
-            <div class="finale-content">
-                <div class="finale-heart-rain" id="heartRain"></div>
-                <p class="finale-end">The End</p>
-                <p class="finale-but">...but your story continues</p>
-                <div class="finale-age">
-                    <p>Here's to another amazing year!</p>
-                </div>
-                <div class="finale-credits">
-                    <p class="credit-line">Made with ♥ by</p>
-                    <p class="credit-name">Maruf Ahmed</p>
-                    <p class="credit-email">dev00.maruf@gmail.com</p>
-                    <p class="credit-year">© 2025 All Rights Reserved</p>
-                </div>
-                <button class="replay-btn" id="replayBtn">
-                    <span>↻ Watch Again</span>
-                </button>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAaXu06u4Sb-GJJygRuJ1L7DgFgJgFHuLk",
-            authDomain: "mim-birthday.firebaseapp.com",
-            projectId: "mim-birthday",
-            storageBucket: "mim-birthday.firebasestorage.app",
-            messagingSenderId: "121193994386",
-            appId: "1:121193994386:web:ccd28de4a9937bc0b5ae4b",
-            measurementId: "G-6TZZYYBWCC"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-
-        // Make logEvent available globally for the main script
-        window.firebaseAnalytics = analytics;
-        window.logFirebaseEvent = (eventName, params = {}) => {
-            logEvent(analytics, eventName, params);
-            console.log(`📊 Firebase: ${eventName}`, params);
-        };
-
-        // Log page visit
-        window.logFirebaseEvent('page_view', {
-            page_title: 'Mim Birthday Experience',
-            page_location: window.location.href
-        });
-    </script>
-
-    <script src="script.js"></script>
 </body>
 
 </html>
