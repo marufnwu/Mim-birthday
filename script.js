@@ -106,10 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'galleryScene', duration: 20000, sound: 'slide' },        // 5 photos × 3.5s + 2.5s = 20 sec
         { id: 'reasonsScene', duration: 28000, sound: 'chime' },        // 3 reasons × 5s gap + typing = 28 sec
         { id: 'letterScene', duration: 38000, sound: 'envelope' },      // envelope 2.5s + 3 paras typing = 38 sec
-        { id: 'birthdayScene', duration: 25000, sound: 'birthday' },    // Birthday fanfare!
-        { id: 'wishScene', duration: 16000, sound: 'magic' },           // Magical moment
-        { id: 'wishesScene', duration: 16000, sound: 'heart' },         // 4 wishes × 3s + 4s = 16 sec
-        { id: 'finaleScene', duration: 60000, sound: 'celebrate' }      // Celebration!
+        { id: 'birthdayScene', duration: 25000, sound: null },    // Birthday - no harsh sound
+        { id: 'wishScene', duration: 16000, sound: null },           // Magical moment - silent
+        { id: 'wishesScene', duration: 16000, sound: null },         // Wishes - silent
+        { id: 'finaleScene', duration: 60000, sound: null }      // Celebration - silent
     ];
 
     let currentSceneIndex = -1;
@@ -355,41 +355,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateShootingStars();
 
-    // ============ BACKGROUND MUSIC ============
+    // ============ BACKGROUND MUSIC - DISABLED ============
     const bgMusic = document.getElementById('bgMusic');
     const musicToggle = document.getElementById('musicToggle');
     let musicPlaying = false;
 
+    // Background music disabled
     function startBackgroundMusic() {
-        if (bgMusic && !musicPlaying) {
-            bgMusic.volume = 0.15;
-            bgMusic.play().then(() => {
-                musicPlaying = true;
-                musicToggle.classList.remove('muted');
-            }).catch(() => {
-                musicToggle.classList.add('muted');
-            });
-        }
+        // Disabled - no background music
     }
 
-    musicToggle.addEventListener('click', () => {
-        if (musicPlaying) {
-            bgMusic.pause();
-            musicPlaying = false;
-            musicToggle.classList.add('muted');
-            logAnalytics('music_toggle', { action: 'mute' });
-        } else {
-            bgMusic.volume = 0.15;
-            bgMusic.play().then(() => {
-                musicPlaying = true;
-                musicToggle.classList.remove('muted');
-                logAnalytics('music_toggle', { action: 'unmute' });
-            }).catch(() => { });
-        }
-    });
+    // Hide music toggle button
+    if (musicToggle) {
+        musicToggle.style.display = 'none';
+    }
 
-    // ============ TYPEWRITER - SYNCED SOUND ============
+
+    // ============ TYPEWRITER - SMOOTH SYNTHESIZED SOUND ============
     let typeAudioInterval = null;
+
+    // Web Audio API for smooth typing sound
+    let audioContext = null;
+
+    function playTypingSound() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            // Soft, high-pitched click
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(800 + Math.random() * 200, audioContext.currentTime);
+
+            // Very quiet and short
+            gainNode.gain.setValueAtTime(0.015, audioContext.currentTime);  // ADJUST THIS VALUE (0.01-0.05) for volume
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.05);
+        } catch (e) { }
+    }
 
     function typeWriter(element, text, speed = 70, callback) {
         let i = 0;
@@ -398,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear any existing interval
         if (typeAudioInterval) clearInterval(typeAudioInterval);
 
-        // Sync sound with actual typing speed (play every 3rd character to reduce noise)
+        // Sync sound with actual typing speed
         let soundCounter = 0;
 
         function type() {
@@ -407,9 +418,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 i++;
                 soundCounter++;
 
-                // Play soft click every 3rd character (less annoying)
-                if (soundCounter % 3 === 0) {
-                    playSound('type', 0.02);
+                // Play smooth typing sound every 2nd character
+                if (soundCounter % 2 === 0) {
+                    playTypingSound();
                 }
 
                 setTimeout(type, speed);
@@ -532,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============ REASONS WITH TYPEWRITER ============
     function initReasons() {
         const reasons = [
-            "Remember that time you made everyone laugh so hard they cried? Yeah, that's your superpower.",
+            "The way you handle everything with such responsibility and care — it's rare and truly admirable.",
             "You're the friend who remembers the little things, the one who shows up when it matters, the one who cares when nobody's watching.",
             "The world would be so boring without your energy, your ideas, and honestly... your chaos. Never change."
         ];
@@ -618,7 +629,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============ BLOW CANDLES - ENHANCED ============
+    // Birthday melody sound
+    function playBirthdayMelody() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            // "Happy Birthday" opening notes melody (C-C-D-C-F-E pattern)
+            const notes = [
+                { freq: 262, time: 0, dur: 0.2 },     // C
+                { freq: 262, time: 0.25, dur: 0.15 }, // C
+                { freq: 294, time: 0.45, dur: 0.3 },  // D
+                { freq: 262, time: 0.8, dur: 0.3 },   // C
+                { freq: 349, time: 1.15, dur: 0.3 },  // F
+                { freq: 330, time: 1.5, dur: 0.5 }    // E (hold)
+            ];
+
+            notes.forEach(note => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(note.freq, audioContext.currentTime + note.time);
+
+                gain.gain.setValueAtTime(0.12, audioContext.currentTime + note.time);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.time + note.dur);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                osc.start(audioContext.currentTime + note.time);
+                osc.stop(audioContext.currentTime + note.time + note.dur + 0.1);
+            });
+        } catch (e) { }
+    }
+
     function initBirthday() {
+        // Play birthday melody when scene starts
+        playBirthdayMelody();
+
         const blowBtn = document.getElementById('blowBtn');
         const candles = document.querySelectorAll('.candle');
 
@@ -788,11 +838,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // ============ QUOTE - VERY SLOW WITH 5 SEC PAUSE ============
+    // ============ QUOTE - WITH LAUGH SOUND ON FUNNY NAMES ============
+    function playLaughSound() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            // Create a fun, bubbly laugh-like sound
+            const laughNotes = [400, 500, 600, 500, 400, 300];
+            laughNotes.forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.08);
+
+                gain.gain.setValueAtTime(0.08, audioContext.currentTime + i * 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.08 + 0.07);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                osc.start(audioContext.currentTime + i * 0.08);
+                osc.stop(audioContext.currentTime + i * 0.08 + 0.08);
+            });
+        } catch (e) { }
+    }
+
     function initQuote() {
         const quoteText = document.getElementById('quoteText');
-        // 80ms per character = very slow and readable
-        typeWriter(quoteText, "Today isn't just another day on the calendar. It's the day the universe decided to gift us with someone who makes everything a little more fun, a little more chaotic, and a whole lot more memorable. Whether you're being Nargis, Nargis Kim, or Bandhobi Lolita — you're always unforgettable.", 80);
+        const fullText = "Today isn't just another day on the calendar. It's the day the universe decided to gift us with someone who makes everything a little more fun, a little more chaotic, and a whole lot more memorable. Whether you're being Nargis, Nargis Kim, or Bandhobi Lolita — you're always unforgettable.";
+
+        // Find where the funny names start
+        const laughTriggerIndex = fullText.indexOf("Nargis, Nargis Kim");
+        let laughPlayed = false;
+
+        let i = 0;
+        function type() {
+            if (i < fullText.length) {
+                quoteText.textContent += fullText.charAt(i);
+
+                // Play laugh sound when we reach the funny names
+                if (i === laughTriggerIndex && !laughPlayed) {
+                    laughPlayed = true;
+                    playLaughSound();
+                }
+
+                i++;
+                setTimeout(type, 80);
+            }
+        }
+        quoteText.textContent = '';
+        type();
     }
 
     // ============ FUN STATS WITH ANIMATED COUNTERS ============
